@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.1",
+  "date": "2026-08-23",
+  "reference_model": "official Qwen3-8B BF16",
+  "metrics": [
+    "actual_task_correctness",
+    "official_answer_class_agreement",
+    "format_integrity",
+    "context_retention"
+  ],
+  "fresh_answer_suite": {
+    "task_count": 16,
+    "official_correct": 16,
+    "dreamfast_heretic_f16_correct": 2,
+    "dreamfast_heretic_f16_official_agreement": 2
+  },
+  "context_ladder": {
+    "levels": [4096, 16384, 32768, 65536, 98000],
+    "official_qwen3_bf16": [1.0, 1.0, 1.0, 1.0, 1.0],
+    "dreamfast_heretic_f16": [0.381, 0.333, 0.310, 0.190, 0.262],
+    "dreamfast_heretic_q8_0": [0.262, 0.333, 0.310, 0.143, 0.429],
+    "dreamfast_heretic_q6_k": [0.310, 0.262, 0.381, 0.190, 0.310],
+    "dreamfast_heretic_q5_k_m": [0.143, 0.262, 0.190, 0.381, 0.310],
+    "dreamfast_heretic_q4_k_m": [0.0, 0.0, 0.0, 0.190, 0.143],
+    "huihui_v2_f16": [0.119, 0.214, 0.262, 0.190, 0.119],
+    "huihui_v2_q6_k": [0.119, 0.071, 0.262, 0.190, 0.167]
+  },
+  "interpretation": "The altered F16 controls were already far below the official model; ordinary quantization was secondary in these runs. This is an experimental result, not a universal claim about all altered models."
+}

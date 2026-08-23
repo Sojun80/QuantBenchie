@@ -1,0 +1,36 @@
+{
+  "name": "llama31-8b-f16-vs-q2k",
+  "reference": {
+    "name": "llama31-8b-instruct-f16",
+    "provider": "openai-compatible",
+    "path": "http://127.0.0.1:8091",
+    "quantization": "f16",
+    "modification": "original",
+    "metadata": {"served_model": "llama31-8b-instruct-f16", "timeout": 180}
+  },
+  "candidates": [
+    {
+      "name": "llama31-8b-instruct-q2k",
+      "provider": "openai-compatible",
+      "path": "http://127.0.0.1:8092",
+      "quantization": "q2_k",
+      "modification": "original",
+      "metadata": {"served_model": "llama31-8b-instruct-q2k", "timeout": 180}
+    }
+  ],
+  "tasks": ["smoke", "integrity"],
+  "sessions": ["progressive"],
+  "output_dir": "results/llama31-f16-vs-q2k",
+  "seed": 7,
+  "temperature": 0.0,
+  "max_tokens": 128,
+  "context_size": 4096,
+  "baseline_repeats": 3,
+  "session_repeats": 1,
+  "fail_threshold": 0.10,
+  "warn_threshold": 0.03,
+  "metadata": {
+    "reference_file": "path/to/Llama-3.1-8B-Instruct-F16.gguf",
+    "candidate_file": "path/to/Llama-3.1-8B-Instruct-Q2_K.gguf"
+  }
+}

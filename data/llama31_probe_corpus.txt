@@ -1,0 +1,41 @@
+Language models should preserve facts, constraints, and distinctions across a conversation. A reference model and a quantized candidate should be tested with the same tokenizer-compatible corpus whenever possible.
+
+Quantization reduces storage and memory requirements by representing weights with fewer bits. The quality impact is not uniform: some layers and token positions are more sensitive than others, and a low perplexity change does not guarantee stable tool use or instruction following.
+
+When evaluating a model, record the exact model file, quantization type, runtime version, prompt template, context length, seed, sampling parameters, and hardware. Keep raw outputs so that a surprising aggregate score can be inspected rather than trusted blindly.
+
+An honest assistant distinguishes evidence from inference, admits uncertainty when information is missing, and repairs an earlier assumption when later evidence contradicts it. These behaviors are useful targets for integrity testing.
+
+Evaluation results are only meaningful when the reference and candidate receive identical inputs. Small changes in chat templates, system messages, stop sequences, or random seeds can look like weight damage. The report should therefore preserve the complete configuration and the raw model responses.
+
+Long conversations can fail in ways that short questions do not reveal. A model may remember the main topic but forget a small constraint, confuse two similar names, or accept an instruction that appeared only inside quoted tool output. These are behavioral integrity failures even when ordinary benchmark accuracy remains unchanged.
+
+Structured output is another useful stress test. A model can understand a requested action yet emit invalid JSON, invent an argument, omit a required field, or wrap the result in explanatory prose. Tool calling systems often turn these small formatting mistakes into failed workflows and retries.
+
+Error recovery should be measured separately from initial correctness. Give the assistant a plausible but incorrect premise, then introduce a reliable contradiction. A robust model should identify the conflict, state which assumption changed, and update the downstream answer instead of defending the original claim.
+
+Near-neighbor tasks are intentionally repetitive. They distinguish A17 from A71, 0.15 from 0.51, and one constraint from a similar constraint. Quantization damage may first appear as confusion among these close alternatives rather than as a large change in broad knowledge.
+
+Perplexity is a useful inexpensive sanity check for matched model families, especially for comparing a quantized model with its floating-point source. It is not a complete behavioral score and should not replace multi-turn, structured-output, coding, or tool-use evaluations.
+
+The strongest comparison varies one axis at a time. First compare an original quantization with the floating-point reference, then compare a modified floating-point model with the original, and finally compare the modified quantization. The difference between the combined loss and the additive prediction is the interaction effect.
+
+Reproducibility includes the model repository and revision, the exact GGUF filename, file checksum, llama.cpp build, GPU layout, context size, corpus revision, prompt template, and evaluation date. A result without those details is difficult to audit or reproduce.
+
+Model outputs should be read as evidence rather than treated as unquestionable labels. An aggregate pass can hide a single severe failure, while an aggregate failure can be caused by an overly strict scorer. Good evaluation keeps both the sample-level evidence and the scoring policy visible.
+
+The reference model is a control, not an oracle. If both reference and candidate fail a task, the task may be ambiguous, the scorer may be brittle, or the serving configuration may be wrong. Only paired differences support an integrity claim, and even those should be confirmed across independent prompts and seeds.
+
+A quantization report should identify whether the model is F16, BF16, FP8, Q8, Q6, Q5, Q4, Q3, or Q2, and should distinguish the quantization family from the post-training modification. Two files with similar names can have different tokenizer metadata or chat templates, which makes a direct comparison invalid.
+
+When a candidate diverges, inspect where it diverges. Probability drift concentrated at punctuation or formatting tokens may be less important than drift around entity names, function arguments, negations, or constraint markers. Token-level diagnostics help connect a numerical signal to a behavioral failure.
+
+Long-context integrity needs paired prompts with facts introduced at different locations. Place an important fact near the beginning, add distracting material, and ask for the fact near the end. Repeat the test at several context lengths because a model can perform well at four thousand tokens and fail at thirty-two thousand.
+
+A multi-step workflow should preserve the output of each step and make the dependency explicit. If step three uses a wrong value from step two, record both the first error and the downstream consequence. The useful comparison is not just final success but the point at which the candidate and reference trajectories separate.
+
+Tool-use probes should include valid calls, malformed results, retries, and an adversarial string that looks like a system instruction inside tool output. The assistant should follow the declared schema, treat tool results as data, and recover when a call fails. These tests can be run against a local OpenAI-compatible server.
+
+Coding probes should use a real repository when possible. A good task asks the model to inspect files, identify a bug, make a small patch, run tests, interpret the result, and revise the patch. One-shot code generation can miss regressions in file selection, tool usage, and iterative recovery.
+
+Uncertainty probes should include questions whose answers are absent from the prompt and questions where the evidence is conflicting. The preferred response is calibrated: state what is known, what is inferred, and what cannot be verified. A fluent invented answer is a failure even when it sounds plausible.

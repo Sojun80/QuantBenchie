@@ -1,0 +1,41 @@
+{
+  "name": "qwen-integrity-smoke",
+  "reference": {
+    "name": "reference-bf16",
+    "provider": "mock",
+    "quantization": "bf16",
+    "modification": "original"
+  },
+  "candidates": [
+    {
+      "name": "candidate-q4",
+      "provider": "mock",
+      "quantization": "q4",
+      "modification": "original",
+      "metadata": {"failure_mode": "neighbor"}
+    },
+    {
+      "name": "candidate-abliterated-bf16",
+      "provider": "mock",
+      "quantization": "bf16",
+      "modification": "abliterated"
+    },
+    {
+      "name": "candidate-abliterated-q4",
+      "provider": "mock",
+      "quantization": "q4",
+      "modification": "abliterated",
+      "metadata": {"failure_mode": "compound"}
+    }
+  ],
+  "tasks": ["smoke", "integrity"],
+  "output_dir": "results/qwen-integrity-smoke",
+  "seed": 7,
+  "temperature": 0.0,
+  "max_tokens": 256,
+  "fail_threshold": 0.1,
+  "warn_threshold": 0.03,
+  "metadata": {
+    "purpose": "first-pass integrity probe; replace mock providers with local server URLs"
+  }
+}
