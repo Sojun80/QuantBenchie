@@ -8,9 +8,32 @@ It pairs a reference model with candidates, runs targeted behavioral probes, com
 
 ## Current Qwen3 finding
 
-The current packaged evaluation compares the official Qwen3-8B BF16 model with third-party altered Qwen3-8B families. The fresh 16-task answer suite scored the official model 16/16 and DreamFast Heretic F16 2/16; the raw answers show prompt corruption, malformed JSON, arithmetic failures, and exact-extraction failures. Huihui v2 shows a similarly large gap. See [evaluation-report.md](evaluation-report.md) for the tables, methodology, reproduction commands, and artifact notes.
+The historical packaged evaluation compares the official Qwen3-8B BF16 model with third-party altered Qwen3-8B families. Its original 16-task pilot scored the official model 16/16 and DreamFast Heretic F16 2/16; the raw answers showed prompt corruption, malformed JSON, arithmetic failures, and exact-extraction failures. Huihui v2 showed a similarly large gap. See [evaluation-report.md](evaluation-report.md) for the historical tables and the parametric benchmark design.
 
 The committed [benchmark summary](data/benchmark-summary.json) is the portable evidence snapshot. Generated model transcripts under `results/` are intentionally ignored because they can be large and may contain machine-specific paths; reproduce them locally or attach them to a release when publishing a specific run.
+
+## Seeded benchmark profiles
+
+The decisive suite is now generated from a seed instead of a fixed list of questions. With generator version `parametric-v1` and `seed=48271`, the same task IDs, prompts, answer classes, distractors, JSON payloads, and context markers are reconstructed exactly. Change the seed for a fresh task set; publish the seed with a result so others can reproduce it, or keep it private until a blind evaluation is complete.
+
+| Profile | Cases | Purpose |
+|---|---:|---|
+| `FAST` | 72 | Quick screening before spending time or disk on a model |
+| `STANDARD` | 720 | Broad one-turn comparison for published model results |
+| `TORTURE` | 460 | Long context, multi-turn retention, loops, tool-result state, and coding workflows |
+
+Run a single model against a profile with the same seed used for the reference and candidate:
+
+```bash
+PYTHONPATH=.:scripts python3 scripts/run_task_suite.py run \
+  --url http://127.0.0.1:8097 \
+  --name my-model \
+  --seed 48271 \
+  --profile FAST \
+  --output results/my-model-fast.json
+```
+
+The model output records the generator version, seed, profile, prompts, turns, expected answer class, raw answer, and validator result. Compare reference and candidate files only when those benchmark fields match.
 
 ## Quick start
 

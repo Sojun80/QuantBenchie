@@ -1,0 +1,60 @@
+{
+  "generator_version": "parametric-v1",
+  "default_seed": 48271,
+  "profiles": {
+    "FAST": {
+      "cases": 72,
+      "description": "Quick screening before committing substantial download or evaluation time.",
+      "categories": {
+        "arithmetic": 16,
+        "logic": 8,
+        "exact_extraction": 8,
+        "semantic_answer": 8,
+        "structured_json": 8,
+        "code": 8,
+        "evidence": 4,
+        "instruction_hierarchy": 4,
+        "near_neighbor": 4,
+        "recovery": 4
+      }
+    },
+    "STANDARD": {
+      "cases": 720,
+      "description": "Broad one-turn comparison for published model results.",
+      "categories": {
+        "arithmetic": 160,
+        "logic": 80,
+        "exact_extraction": 80,
+        "semantic_answer": 80,
+        "structured_json": 80,
+        "code": 80,
+        "evidence": 40,
+        "instruction_hierarchy": 40,
+        "near_neighbor": 40,
+        "recovery": 40
+      }
+    },
+    "TORTURE": {
+      "cases": 460,
+      "description": "Long context, multi-turn retention, loops, tool-result workflow state, and coding workflows.",
+      "context_chars": [16000, 64000, 128000, 256000, 400000],
+      "categories": {
+        "arithmetic": 48,
+        "logic": 24,
+        "exact_extraction": 24,
+        "semantic_answer": 24,
+        "structured_json": 24,
+        "code": 48,
+        "evidence": 12,
+        "instruction_hierarchy": 12,
+        "near_neighbor": 24,
+        "recovery": 12,
+        "long_context": 16,
+        "multi_turn": 48,
+        "loop": 48,
+        "agentic_workflow": 48,
+        "coding_workflow": 48
+      }
+    }
+  }
+}

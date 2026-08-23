@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Replaced the fixed semantic pilot with seeded parametric task generation.
+- Added `FAST`, `STANDARD`, and `TORTURE` profiles with reproducible seed metadata.
+- Added generated arithmetic, identifiers, near-neighbor distractors, JSON payloads, recovery cases, long-context records, multi-turn workflows, loops, and coding/agentic probes.
+
 ## 0.1.0 — experimental release
 
 - Initial local-model integrity evaluation harness.

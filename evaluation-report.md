@@ -2,6 +2,18 @@
 
 Date: 2026-08-23
 
+## Parametric benchmark design
+
+The fixed 16-question suite below is retained as a historical pilot result. New runs use the seeded `parametric-v1` generator in [`scripts/semantic_compare.py`](scripts/semantic_compare.py), with `seed=48271` reproducing the exact task set.
+
+| Profile | Cases | Coverage |
+|---|---:|---|
+| `FAST` | 72 | Generated arithmetic, logic, extraction, semantic, JSON, code, evidence, hierarchy, near-neighbor, and recovery probes |
+| `STANDARD` | 720 | The same objective categories at a scale suitable for published comparisons |
+| `TORTURE` | 460 | Adds approximately 4k–100k-token context records, multi-turn retention, loops, tool-result workflow state, and coding workflows |
+
+The generator uses independent deterministic random streams per category. A changed seed changes operands, identifiers, distractors, schemas, corrections, and context markers without changing the profile shape. Validators accept answer classes where wording can legitimately vary, while objective outputs remain exact or schema-checked.
+
 ## Executive result
 
 The original Qwen3-8B BF16 model was used as the reference. Two third-party altered Qwen3-8B lineages were tested:
@@ -11,7 +23,7 @@ The original Qwen3-8B BF16 model was used as the reference. Two third-party alte
 | DreamFast Heretic | F16, Q8_0, Q6_K, Q5_K_M, Q4_K_M | F16 was already far below the official model; quantization was secondary |
 | Huihui v2 | F16, Q6_K | Both were similarly far below the official model |
 
-The decisive fresh suite used 16 independent prompts instead of one packed JSON response:
+The decisive historical pilot used 16 independent prompts instead of one packed JSON response:
 
 | Metric | Official Qwen3 BF16 | DreamFast Heretic F16 |
 |---|---:|---:|
@@ -24,7 +36,7 @@ The committed [benchmark summary](data/benchmark-summary.json) contains the port
 
 ## What was tested
 
-The fresh answer-oriented suite contains 16 independent tasks:
+The historical answer-oriented pilot contained 16 independent tasks:
 
 - 3 arithmetic tasks
 - 2 logic tasks
@@ -91,17 +103,21 @@ Format integrity is also tracked separately where relevant: valid JSON, required
 
 ## Reproduction
 
-Start each model in llama.cpp with the same generation and context settings, then run the fresh suite sequentially so both 16GB-weight models do not compete for GPU memory:
+Start each model in llama.cpp with the same generation and context settings, then run the selected generated profile sequentially so both 16GB-weight models do not compete for GPU memory:
 
 ```bash
 PYTHONPATH=.:scripts python3 scripts/run_task_suite.py run \
   --url http://127.0.0.1:8097 \
   --name official-qwen3-8b-bf16 \
+  --seed 48271 \
+  --profile STANDARD \
   --output results/semantic-compare/official.json
 
 PYTHONPATH=.:scripts python3 scripts/run_task_suite.py run \
   --url http://127.0.0.1:8098 \
   --name heretic-qwen3-8b-f16 \
+  --seed 48271 \
+  --profile STANDARD \
   --output results/semantic-compare/heretic-f16.json
 
 PYTHONPATH=.:scripts python3 scripts/run_task_suite.py compare \
@@ -112,7 +128,7 @@ PYTHONPATH=.:scripts python3 scripts/run_task_suite.py compare \
 
 Relevant files:
 
-- [`scripts/semantic_compare.py`](scripts/semantic_compare.py) — task definitions and validators
+- [`scripts/semantic_compare.py`](scripts/semantic_compare.py) — seeded task generators, profiles, and validators
 - [`scripts/run_task_suite.py`](scripts/run_task_suite.py) — sequential model runner and comparison
 - `results/semantic-compare/official.json` — generated official raw answers
 - `results/semantic-compare/heretic-f16.json` — generated Heretic raw answers

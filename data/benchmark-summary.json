@@ -2,6 +2,15 @@
   "schema_version": "0.1",
   "date": "2026-08-23",
   "reference_model": "official Qwen3-8B BF16",
+  "benchmark_design": {
+    "generator_version": "parametric-v1",
+    "default_seed": 48271,
+    "profiles": {
+      "FAST": 72,
+      "STANDARD": 720,
+      "TORTURE": 460
+    }
+  },
   "metrics": [
     "actual_task_correctness",
     "official_answer_class_agreement",
